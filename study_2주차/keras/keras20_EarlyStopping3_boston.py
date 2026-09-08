@@ -9,9 +9,9 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 es = EarlyStopping(
     monitor="val_loss",
-    mode="auto",
+    mode="min",
     patience=20,
-    restore_best_weights=True,
+    restore_best_weights=False,
 )
 
 # 텐서플로우에서 데이터셋을 가져올때 아래와 같이 가져오면 된다
@@ -32,7 +32,7 @@ model.compile(loss='mse', optimizer='adam')
 # mse 계산 = (y트레인 - y트레인 예측값)의 제곱을 합해서 총 데이터 갯수로 나눠준다 (식 확인)
 # 파이썬은 인터프리터언어로 epochs 할때마다 loss 값을 계산하여 W(가중치)를 갱신한다
 hist = model.fit(x_train, y_train, 
-          epochs=500, batch_size=64,
+          epochs=1000, batch_size=32,
           validation_split=0.2,
           callbacks=[es],
           )

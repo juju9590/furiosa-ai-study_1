@@ -51,9 +51,10 @@ es = EarlyStopping(
 start_time = time.time() #현재시간을 반환, = 시작시간
 # [기능확인]
 hist = model.fit(x_train, y_train, 
-                epochs=500000, 
+                epochs=1000, 
                 batch_size=64,
                 validation_split=0.2,
+                # verbose=0,
                 callbacks=[es],
                 )
 # fit() 함수였고 기본적으로 출력/반복 기능이 있다.

@@ -32,11 +32,11 @@ es = EarlyStopping(
     monitor="val_loss",
     mode="auto",
     patience=20,
-    restore_best_weights=True,
+    restore_best_weights=False,
 )
 
 hist = model.fit(x_train, y_train, 
-          epochs=300, 
+          epochs=1000, 
           batch_size=32,
           validation_split=0.20,
           callbacks=[es],
