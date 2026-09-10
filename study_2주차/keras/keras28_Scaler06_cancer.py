@@ -70,6 +70,24 @@ print(np.unique(y_test, return_counts=True))
 print(x_train.shape, x_test.shape) # (398, 30) (171, 30)
 print(y_train.shape, y_test.shape) # (398,) (171,)
 
+
+
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
+
+
+
+
+
 #2. 모델구성
 model = Sequential()
 model.add(Dense(30, input_dim=30, activation='relu'))
@@ -185,7 +203,7 @@ print("acc_score : ", acc_score ) # acc_score :  0.9122807017543859
 # 회귀 → 숫자 예측 → R², MSE, RMSE
 # 분류 → 종류 예측 → Accuracy, Precision, Recall, F1
 
-# =====================================================
+# ========================== 결과 ===========================
 
 # Epoch 45/100
 # 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step - accuracy: 0.9353 - loss: 0.1656 - val_accuracy: 0.9167 - val_loss: 0.2040
@@ -199,6 +217,20 @@ print("acc_score : ", acc_score ) # acc_score :  0.9122807017543859
 # 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step 
 # acc_score :  0.9181286549707602
 # PS C:\study> 
+
+
+# ========================== MinMaxScaler 적용 후  =========================== ==> 향상
+# Epoch 100/100
+# 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step - accuracy: 0.9964 - loss: 0.0092 - val_accuracy: 0.9917 - val_loss: 0.0668
+# ===================== 학습완료 ===========================
+# ======================================================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - accuracy: 0.9883 - loss: 0.0681 
+# loss :  0.0681
+# accuracy :  0.9883
+# ======================================================
+# ======== 예측값(시그모이드까지만 적용, 반올림 미적용) 앞에서 10개만 =============
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step 
+# acc_score :  0.9883040935672515
 
 
 

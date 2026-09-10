@@ -148,10 +148,6 @@ print(" =========== 원핫2 =============== ")
 
 # exit()
 
-# y_np = pd.get_dummies(pd.DataFrame(y))
-# print(np.array(y_np))
-
-
 ########################## 원핫3. sklearn ####################################
 # 3. scikit learn → OneHotEncoder
 
@@ -191,7 +187,8 @@ print(y, y.shape) # (150, 1)
 # exit()
 # ohe = OneHotEncoder() # sparse 형태로 나온다.
 
-ohe = OneHotEncoder(sparse_output=False)
+ohe = OneHotEncoder(sparse_output=False) # 매트릭스(=행렬) 형태의 자료를 원함 => sparse_output=False 추가 
+
 y = ohe.fit_transform(y)
 print(y, y.shape)
 
@@ -219,7 +216,9 @@ model.add(Dense(10, )) # 중간에 활성화 함수 없어도 상관없다.
 model.add(Dense(10, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(3, activation='softmax')) # 다중분류는 마지막 레이어에서는 무조건 (softmax는 모든 행의 합이 1이 넘지 않도록 해준다.)
-
+# y에서 추출된 값을 모두 더한 후 N 빵 하기 때문에 1을 넘길 수 없다. 
+# 큰수는 더 확실하게 커지고, 작은 수는 더 작아지게 만들어 argmax 처리 시 분명하게 구분할 수 있도록 해준다
+# https://wikidocs.net/35476
 
 # 숫자의 값이 아니라 위치로 변경하여 인식 시킨다 
 # ㄴ = OneHotEncoding
@@ -229,6 +228,7 @@ model.add(Dense(3, activation='softmax')) # 다중분류는 마지막 레이어�
 
 #3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', # 다중분류에서 무조건 
+              # https://wordbe.tistory.com/46 크로스엔트로피,, 수식에서 0과  1을 넣으면 한쪽이 날라가는 수식
               optimizer='adam',
               metrics=['acc'],              
               )

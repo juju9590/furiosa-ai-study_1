@@ -40,7 +40,7 @@ print(x.shape, y.shape) #(581012, 54) (581012,)
 print(np.unique(y, return_counts=True)) #(array([1, 2, 3, 4, 5, 6, 7], dtype=int32), array([211840, 283301,  35754,   2747,   9493,  17367,  20510]))
 
 
-print("================= 원핫1. to_categorical  =====================")
+# print("================= 원핫1. to_categorical  =====================")
 ##########  to_categorical ###################
 # from tensorflow.keras.utils import to_categorical 
 # ### 카테고리컬로 하면 무조건 0부터 시작한다. 그래서 빈칸을 0으로 만들어 버린다. 그럼 0에 수렴하는 오류가 발생한다 
@@ -83,7 +83,7 @@ print(y, y.shape)
 # print("================= 원핫3. OneHotEncoding  =====================")
 # from sklearn.preprocessing import OneHotEncoder
 # print(np.unique(y), y.shape) # [1 2 3 4 5 6 7] (581012,)
-# # ㄴ y의 클래스는 7개, y의 쉐이프는 1차원으로 reshape로 변환 필요
+# ㄴ y의 클래스는 7개, y의 쉐이프는 1차원으로 reshape로 변환 필요
 
 
 # exit()
@@ -95,6 +95,20 @@ x_train, x_test, y_train, y_test = train_test_split(x,y,
                                                     shuffle=True,
                                                     stratify=y,
                                                     )
+
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
+
+
 
 #2. 모델구성
 model = Sequential()
@@ -151,4 +165,14 @@ print("acc_score :", acc_score)
 # 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 426us/step 
 # acc_score : 0.7233117905733931
 
+###################### MinMaxScaler 적용 후 ################## =======> loss 향상 acc 향상
+
+# 2906/2906 ━━━━━━━━━━━━━━━━━━━━ 3s 968us/step - acc: 0.7484 - loss: 0.5946 - val_acc: 0.7405 - val_loss: 0.6067
+# 걸린시간 : 31.511 초
+# ======================== 학습종료 =======================
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 674us/step - acc: 0.7479 - loss: 0.5952
+# loss : 0.5952174663543701
+# acc : 0.7478550672531128
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 428us/step 
+# acc_score : 0.747855046771598
 

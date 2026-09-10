@@ -122,6 +122,18 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 print(x_train.shape, x_test.shape) # (124, 13) (54, 13)
 print(y_train.shape, y_test.shape) # (124, 3) (54, 3)
 
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
+
+
 # 2. 모델구성
 model = Sequential()
 model.add(Dense(30, input_dim=13, activation='relu'))
@@ -169,11 +181,24 @@ print(y_test [:10])
 acc_score = accuracy_score(y_test, y_pred)
 print("acc_score : ", acc_score)
 
-
+############################### 결과 ##############################
 # 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step - acc: 0.9444 - loss: 0.2345 
 # loss : 0.23451410233974457
 # acc : 0.9444444179534912
 # 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 47ms/step
+# [2 2 1 1 0 1 0 1 0 2]
+# [2 2 1 1 0 1 0 1 0 2]
+# acc_score :  0.9444444444444444
+
+############################### MinMaxScaler 적용 후 ############################## ==> loss는 향상, acc는 동일
+# Epoch 531/5000
+# 8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - acc: 1.0000 - loss: 5.1798e-07 - val_acc: 0.9655 - val_loss: 0.1262
+# 걸린시간 : 32.21
+# ===================== 학습 끝 ==========================
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step - acc: 0.9444 - loss: 0.1233
+# loss : 0.12325848639011383
+# acc : 0.9444444179534912
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 34ms/step
 # [2 2 1 1 0 1 0 1 0 2]
 # [2 2 1 1 0 1 0 1 0 2]
 # acc_score :  0.9444444444444444

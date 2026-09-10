@@ -39,6 +39,17 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 
                  )
 
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
+
 print(x_train.shape, y_train.shape) #(140000, 200) (140000,)
 
 #2. 모델구성
@@ -95,15 +106,15 @@ print("acc_score : ", round(acc_score,4))
 # 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 337us/step 
 # acc_score :  0.9104666666666666
 
-########### submission.csv 만들기 // target 컬럼에 넣어준다 #############
+# ########### submission.csv 만들기 // target 컬럼에 넣어준다 #############
+# # print(submission_csv)
+# y_submit = model.predict(test_csv)
+# y_submit = np.round(y_submit)
+
+# submission_csv['target'] = y_submit
 # print(submission_csv)
-y_submit = model.predict(test_csv)
-y_submit = np.round(y_submit)
 
-submission_csv['target'] = y_submit
-print(submission_csv)
-
-submission_csv.to_csv(path + "submit/" + "submit_0908_1737.csv")
+# submission_csv.to_csv(path + "submit/" + "submit_0908_1737.csv")
 
 # ================================ 2차 시도 =======================================
 # 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 581us/step - acc: 0.9105 - loss: 0.2454
@@ -112,44 +123,13 @@ submission_csv.to_csv(path + "submit/" + "submit_0908_1737.csv")
 # 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 317us/step 
 # acc_score :  0.9105
 
-# ================================== 3차 시도 =======================================
-# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 594us/step - acc: 0.8833 - loss: 0.6095
-# loss :  0.6095
-# acc :  0.8833
-# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 328us/step 
-# acc_score :  0.8833
-# 6250/6250 ━━━━━━━━━━━━━━━━━━━━ 2s 314us/step 
-#              target
-# ID_code            
-# test_0          0.0
-# test_1          1.0
-# test_2          1.0
-# test_3          0.0
-# test_4          0.0
-# ...             ...
-# test_199995     0.0
-# test_199996     0.0
-# test_199997     0.0
-# test_199998     0.0
-# test_199999     0.0
-
-# ================================== 4차 시도 =======================================
-# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 602us/step - acc: 0.9094 - loss: 0.2474
-# loss :  0.2474
-# acc :  0.9094
-# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 319us/step 
-# acc_score :  0.9094
-# 6250/6250 ━━━━━━━━━━━━━━━━━━━━ 2s 315us/step 
-#              target
-# ID_code            
-# test_0          0.0
-# test_1          0.0
-# test_2          0.0
-# test_3          0.0
-# test_4          0.0
-# ...             ...
-# test_199995     0.0
-# test_199996     0.0
-# test_199997     0.0
-# test_199998     0.0
-# test_199999     0.0
+# ================================ MinMaxScaler 적용 후  =========================== ==> 하향
+# Epoch 100/100
+# 1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 250ms/step - acc: 0.9079 - loss: 0.2580 - val_acc: 0.9034 - val_loss: 0.2667
+# 걸린시간 :  26.51 초
+# ================================= 학습 종료 =================================
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 667us/step - acc: 0.9057 - loss: 0.2611
+# loss :  0.2611
+# acc :  0.9057
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 380us/step 
+# acc_score :  0.9056

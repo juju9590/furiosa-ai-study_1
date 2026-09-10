@@ -53,6 +53,21 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size=0.8, random_state=142,
     )
 
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
+
+
+
+
 # 2. 모델 구성
 model = Sequential()
 model.add(Dense(12, activation='relu', input_dim=8))
@@ -82,35 +97,37 @@ rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 print("rmse : ", rmse)
 
 
-print("================== history ===============================")
-print(hist)
-print("================== hist.history ==========================")
-print(hist.history)
-print("================== loss ==========================")
-print(hist.history['loss'])
-print("================== val_loss ==========================")
-print(hist.history['val_loss'])
+# print("================== history ===============================")
+# print(hist)
+# print("================== hist.history ==========================")
+# print(hist.history)
+# print("================== loss ==========================")
+# print(hist.history['loss'])
+# print("================== val_loss ==========================")
+# print(hist.history['val_loss'])
 
-print("================== 시각화 ==========================")
-import matplotlib.pyplot as plt
+# print("================== 시각화 ==========================")
+# import matplotlib.pyplot as plt
 
-# plt에서 한글 못 읽기 때문에 맑은고딕 폰트 설정 필수
-# plt.rcParams['font.family']='Malgun Gothic'
-plt.rc('font', family = 'Hancom Gothic')
+# # plt에서 한글 못 읽기 때문에 맑은고딕 폰트 설정 필수
+# # plt.rcParams['font.family']='Malgun Gothic'
+# plt.rc('font', family = 'Hancom Gothic')
 
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'], c='red', label='loss')
-plt.plot(hist.history['val_loss'], c='blue', label='val_loss')
-# x를 명시하지 않으면 y값을 시간순으로 그려줌
-plt.legend(loc="upper right") # 우측 상단에 라벨표시(범례)
-plt.title('캐글 Loss')
-plt.xlabel('epochs')
-plt.ylabel('loss')
-plt.grid() #모눈종이처럼 표시(격자)
-plt.show()
+# plt.figure(figsize=(9,6))
+# plt.plot(hist.history['loss'], c='red', label='loss')
+# plt.plot(hist.history['val_loss'], c='blue', label='val_loss')
+# # x를 명시하지 않으면 y값을 시간순으로 그려줌
+# plt.legend(loc="upper right") # 우측 상단에 라벨표시(범례)
+# plt.title('캐글 Loss')
+# plt.xlabel('epochs')
+# plt.ylabel('loss')
+# plt.grid() #모눈종이처럼 표시(격자)
+# plt.show()
 
 # 최소의 오차(loss), 최적의 웨이트
 
+
+##################################### 결과 ###################################
 # Epoch 100/100
 # 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 884us/step - loss: 23428.4336 - val_loss: 24937.2461
 # =================================================
@@ -119,5 +136,15 @@ plt.show()
 # 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 890us/step
 # r2 :  0.27792996168136597
 # rmse :  151.9058867769778
+
+##################################### MinMaxScaler 적용  ################################### ==> 소폭 향상
+# Epoch 100/100
+# 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 916us/step - loss: 23041.4199 - val_loss: 24915.9121
+# =================================================
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 714us/step - loss: 22969.3359
+# loss :  22969.3359375
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 715us/step
+# r2 :  0.28124868869781494
+# rmse :  151.55639162948555
 
 

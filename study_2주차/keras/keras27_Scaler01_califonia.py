@@ -1,4 +1,7 @@
-# 11-1 copy
+# 19-1 copy
+
+# import ssl
+# ssl._create_default_https_context = ssl._create_unverified_context
 
 from sklearn.datasets import fetch_california_housing
 # 사이킷런에서 학습 데이터 제공 datasets (캘리포이아 집값), 데이터를 함수 형태로 만들어 놨음
@@ -12,26 +15,55 @@ import time
 
 
 #1. 데이터
-datasets = fetch_california_housing() # 켈리포이나아 하우징 데이터를 앞으로 데이터 셋이라고 할꺼야
+datasets = fetch_california_housing() 
 x = datasets.data
 y = datasets.target
 
-print(x.shape, y.shape) #(20640, 8) (20640,) => 8열 =컬럼 = 피처
+print(x.shape, y.shape) #(20640, 8) (20640,)
+
+'''
+MinMaxScaler 알고리즘
+ㄴ X 데이터를 (0~1)사이로 만들어 준다 (x 데이터를 동일한 비율로 조절한다)
+
+       원값 - Min
+수식 = -----------
+       Max - Min
+'''
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x) # 실행 준비
+x = scaler.transform(x) # 실행 준비한걸 변환 시킨다
+
+print(x)
+'''
+[[0.53966842 0.78431373 0.0435123  ... 0.00149943 0.5674814  0.21115538]
+ [0.53802706 0.39215686 0.03822395 ... 0.00114074 0.565356   0.21215139]
+ [0.46602805 1.         0.05275646 ... 0.00169796 0.5642933  0.21015936]
+ ...
+ [0.08276438 0.31372549 0.03090386 ... 0.0013144  0.73219979 0.31175299]
+ [0.09429525 0.33333333 0.03178269 ... 0.0011515  0.73219979 0.30179283]
+ [0.13025338 0.29411765 0.03125246 ... 0.00154886 0.72582359 0.30976096]]
+'''
+print(np.min(x), np.max(x)) # 0.0 1.0000000000000002
+
+# exit()
+
 
 x_train, x_test, y_train, y_test = train_test_split(
 # 데이터의 순서는 바뀌면 안된다.
     x,y,
     train_size=0.8,
-    test_size=0.2,
-    shuffle=True,
-    random_state=333,
-)
+    # test_size=0.2,
+    # shuffle=True, #디폴트 섞는다
+    random_state=777,
+) 
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(2, input_dim=8))
+model.add(Dense(2, activation='relu', input_dim=8))
 model.add(Dense(6, activation='relu'))
-model.add(Dense(12, activation='relu'))
+model.add(Dense(12))
 model.add(Dense(6, activation='relu'))
 model.add(Dense(1))
 
@@ -98,14 +130,15 @@ plt.show()
 
 
 # Epoch 100/100
-# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 807us/step - loss: 0.4926 - val_loss: 0.5594
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 852us/step - loss: 1.3361 - val_loss: 1.3667
 # =================================================
-# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 579us/step - loss: 0.5388
-# loss : 0.538833737373352
-# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 472us/step
-# r2 :  0.577
-# rmse :  0.734
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 620us/step - loss: 1.2891
+# loss : 1.2890541553497314
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 399us/step
+# r2 :  -0.0
+# rmse :  1.135
 
-# [[ 성능 비교 ]]
-# 스케일링 전(19-1) > Train_test 분리 후(28-1) > Train_test 분리 전(27-1)
+
+
+
 

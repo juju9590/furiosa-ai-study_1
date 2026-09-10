@@ -21,14 +21,14 @@ print(x.shape, y.shape) #(1797, 64) (1797,)
 # print(np.unique(y, return_counts=True))
 # (array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([178, 182, 177, 183, 181, 182, 181, 179, 174, 180]))
 
-print(" ================= 원핫1. to_categorical =======================")
+# print(" ================= 원핫1. to_categorical =======================")
 
 # from tensorflow.keras.utils import to_categorical 
 # y = to_categorical(y)
 # print(y)
 # print(y.shape) #(1797, 10)
 
-print(" ================= 원핫2. pd.get_dummies =======================")
+# print(" ================= 원핫2. pd.get_dummies =======================")
 
 # y = pd.get_dummies(y, dtype=int)
 # print(y)
@@ -57,6 +57,17 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 
 print(x_train.shape, x_test.shape) # (1437, 64) (360, 64)
 print(y_train.shape, y_test.shape) # (1437, 10) (360, 10)
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+scaler.fit(x_train) 
+
+x_train = scaler.transform(x_train)  
+x_test = scaler.transform(x_test)    
+
+print(np.min(x_train), np.max(x_train)) 
+print(np.min(x_test), np.max(x_test))
 
 #2. 모델구성
 model = Sequential()
