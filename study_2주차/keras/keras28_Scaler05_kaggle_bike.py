@@ -1,11 +1,10 @@
-# 14-1 카피
-
-
 # https://www.kaggle.com/competitions/bike-sharing-demand/overview
 
 # 활성 함수
 # Linear
 # relu : 0이상은 그대로, 음수는 0처리
+
+# 19-5  카피
 
 import numpy as np
 import pandas as pd
@@ -54,8 +53,11 @@ x_train, x_test, y_train, y_test = train_test_split(
     )
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 
 scaler.fit(x_train) 
 
@@ -77,12 +79,19 @@ model.add(Dense(1))
 
 # 3. 컴파일, 훈련
 model.compile(loss="mse", optimizer="adam")
+
+import time
+start_time = time.time()
 hist = model.fit(x_train, y_train, 
                  epochs=100, batch_size=32,
                  validation_split=0.2,
           )
+end_time = time.time()
 
-print("=================================================")
+print("걸린시간 :", round(end_time-start_time,2), "초")
+
+
+print("================== 학습 종료 ===================")
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -127,7 +136,7 @@ print("rmse : ", rmse)
 # 최소의 오차(loss), 최적의 웨이트
 
 
-##################################### 결과 ###################################
+##################################### 결과 ###########################
 # Epoch 100/100
 # 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 884us/step - loss: 23428.4336 - val_loss: 24937.2461
 # =================================================
@@ -137,7 +146,7 @@ print("rmse : ", rmse)
 # r2 :  0.27792996168136597
 # rmse :  151.9058867769778
 
-##################################### MinMaxScaler 적용  ################################### ==> 소폭 향상
+##################################### MinMaxScaler 적용  ############## ==> 소폭 향상
 # Epoch 100/100
 # 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 916us/step - loss: 23041.4199 - val_loss: 24915.9121
 # =================================================
@@ -146,5 +155,40 @@ print("rmse : ", rmse)
 # 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 715us/step
 # r2 :  0.28124868869781494
 # rmse :  151.55639162948555
+
+##################################### StandardScaler 적용  ############## ==> 소폭 향상
+# Epoch 100/100
+# 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 879us/step - loss: 22292.0059 - val_loss: 24245.3984
+# 걸린시간 : 22.26 초
+# ================== 학습 종료 ===================
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 712us/step - loss: 22668.6934
+# loss :  22668.693359375
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 725us/step
+# r2 :  0.29065656661987305      ### 1에 가까울수록 좋고
+# rmse :  150.56125466483732     ### 0에 가까울수록 좋다.
+
+##################################### MaxAbsScaler 적용  ############## ==> loss 하향, r2, rmse 향상
+# Epoch 100/100
+# 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 902us/step - loss: 23191.3379 - val_loss: 24926.5566
+# 걸린시간 : 22.09 초
+# ================== 학습 종료 ===================
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 666us/step - loss: 23043.7012
+# loss :  23043.701171875
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 786us/step
+# r2 :  0.27892178297042847
+# rmse :  151.80152543699947
+
+##################################### RobustScaler 적용  ############## ==> 성능개선
+
+# Epoch 100/100
+# 218/218 ━━━━━━━━━━━━━━━━━━━━ 0s 950us/step - loss: 22467.1953 - val_loss: 24203.8477
+# 걸린시간 : 22.2 초
+# ================== 학습 종료 ===================
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 655us/step - loss: 22406.5508
+# loss :  22406.55078125
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 861us/step
+# r2 :  0.2988594174385071
+# rmse :  149.68817197135184
+
 
 

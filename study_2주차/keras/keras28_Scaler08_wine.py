@@ -1,3 +1,6 @@
+# 23-2 카피
+
+
 from sklearn.datasets import load_wine
 
 ## acc = 0.95 이상
@@ -122,12 +125,15 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 print(x_train.shape, x_test.shape) # (124, 13) (54, 13)
 print(y_train.shape, y_test.shape) # (124, 3) (54, 3)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 
-scaler.fit(x_train) 
-
-x_train = scaler.transform(x_train)  
+# scaler.fit(x_train) 
+# x_train = scaler.transform(x_train)  
+x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)    
 
 print(np.min(x_train), np.max(x_train)) 
@@ -165,7 +171,7 @@ model.fit(x_train, y_train,
           )
 
 end_time = time.time()
-print("걸린시간 :", round((end_time-start_time),2))
+print("걸린시간 :", round((end_time-start_time),2),"초")
 
 print("===================== 학습 끝 ==========================")
 # 4. 평가, 예측
@@ -203,6 +209,46 @@ print("acc_score : ", acc_score)
 # [2 2 1 1 0 1 0 1 0 2]
 # acc_score :  0.9444444444444444
 
+############################### StandardScaler 적용 후 ############################## ==> 향상
+
+# Epoch 503/5000
+# 8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - acc: 1.0000 - loss: 1.0338e-07 - val_acc: 0.9310 - val_loss: 1.0770
+# 걸린시간 : 30.17 초
+# ===================== 학습 끝 ==========================
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 17ms/step - acc: 0.9722 - loss: 0.1701
+# loss : 0.1700826734304428
+# acc : 0.9722222089767456
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 37ms/step
+# [2 2 1 1 0 1 0 1 0 2]
+# [2 2 1 1 0 1 0 1 0 2]
+# acc_score :  0.9722222222222222
+
+
+############################### MaxAbsScaler 적용 후 ############################## ==> loss 하향, acc 하향
+# 8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - acc: 1.0000 - loss: 1.8145e-07 - val_acc: 0.9310 - val_loss: 0.3421
+# 걸린시간 : 49.3 초
+# ===================== 학습 끝 ==========================
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step - acc: 0.9444 - loss: 0.2319
+# loss : 0.23194533586502075
+# acc : 0.9444444179534912
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 32ms/step
+# [2 2 1 1 0 1 0 1 0 2]
+# [2 2 1 1 0 1 0 1 0 2]
+# acc_score :  0.9444444444444444
+
+############################### RobustScaler 적용 후 ############################## ==> loss 개선, acc 하향
+
+# Epoch 504/5000
+# 8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - acc: 1.0000 - loss: 3.2070e-07 - val_acc: 0.9310 - val_loss: 0.3985
+# 걸린시간 : 30.12 초
+# ===================== 학습 끝 ==========================
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 12ms/step - acc: 0.9167 - loss: 0.1447
+# loss : 0.14471149444580078
+# acc : 0.9166666865348816
+# 2/2 ━━━━━━━━━━━━━━━━━━━━ 0s 34ms/step
+# [2 2 1 1 0 1 0 1 0 2]
+# [2 2 1 1 0 1 0 1 0 2]
+# acc_score :  0.9166666666666666
 
 
 

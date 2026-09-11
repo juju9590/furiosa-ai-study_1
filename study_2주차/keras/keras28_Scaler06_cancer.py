@@ -1,6 +1,8 @@
 # 분류
 # AI 모델은 분류(이진,다중 분류)와 회귀 모델 2가지만 있다.
 
+# 21 카피
+
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import Sequential
@@ -73,8 +75,14 @@ print(y_train.shape, y_test.shape) # (398,) (171,)
 
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
+
+
 
 scaler.fit(x_train) 
 
@@ -134,21 +142,22 @@ model.fit(x_train, y_train,
           callbacks=[es],
           )
 end_time = time.time()
+print("걸린시간 :", round(end_time-start_time,2), "초")
 
 print("===================== 학습완료 ===========================")
 
 #4. 성능, 평가
-print("======================================================")
+print("=========================================================")
 loss = model.evaluate(x_test, y_test)
 print("loss : ", round(loss[0],4)) # loss=binary_crossentropy
 print("accuracy : ", round(loss[1],4))
-print("======================================================")
+print("=========================================================")
 
 
 # loss는 상대적인 성질을 가지고 있어 1번만 훈련해서 나온 loss값은 잘했다고 할 수없다.
 # 하지만 분류모델은 보조지표를 가지고 0,1을 정확하게 맞추는지 정확도를 알아볼 수 있다. 보조지표는 컴파일에서 적용
 
-print("======== 예측값(시그모이드까지만 적용, 반올림 미적용) 앞에서 10개만 =============")
+# print("======== 예측값(시그모이드까지만 적용, 반올림 미적용) 앞에서 10개만 =============")
 y_pred = model.predict(x_test)
 # print(y_pred[:10]) # 0~1사이의 값을 뽑아준다.. 앞 10개만 뽑아본다면?
 # [[0.9978364 ]
@@ -223,14 +232,50 @@ print("acc_score : ", acc_score ) # acc_score :  0.9122807017543859
 # Epoch 100/100
 # 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step - accuracy: 0.9964 - loss: 0.0092 - val_accuracy: 0.9917 - val_loss: 0.0668
 # ===================== 학습완료 ===========================
-# ======================================================
 # 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - accuracy: 0.9883 - loss: 0.0681 
 # loss :  0.0681
 # accuracy :  0.9883
-# ======================================================
 # ======== 예측값(시그모이드까지만 적용, 반올림 미적용) 앞에서 10개만 =============
 # 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step 
 # acc_score :  0.9883040935672515
+
+# ############## StandardScaler 적용 후  ################### ==> 향상
+# Epoch 29/100
+# 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 1.0000 - loss: 0.0012 - val_accuracy: 0.9667 - val_loss: 0.1402
+# 걸린시간 : 2.73 초
+# ===================== 학습완료 ===========================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step - accuracy: 0.9591 - loss: 0.0872 
+# loss :  0.0872
+# accuracy :  0.9591
+# =========================================================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step 
+# acc_score :  0.9590643274853801
+
+# ############## MaxAbsScaler 적용 후  ################### ==> loss 하향, 정확도 향상
+# Epoch 100/100
+# 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.9784 - loss: 0.0592 - val_accuracy: 0.9917 - val_loss: 0.0423
+# 걸린시간 : 7.14 초
+# ===================== 학습완료 ===========================
+# =========================================================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - accuracy: 0.9532 - loss: 0.1173 
+# loss :  0.1173
+# accuracy :  0.9532
+# =========================================================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step 
+# acc_score :  0.9532163742690059
+
+# ############## RobustScaler 적용 후  ################### ==> loss 하향, 정확도 향상
+# Epoch 29/100
+# 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 1.0000 - loss: 0.0023 - val_accuracy: 0.9417 - val_loss: 0.1868
+# 걸린시간 : 2.86 초
+# ===================== 학습완료 ===========================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - accuracy: 0.9649 - loss: 0.1388 
+# loss :  0.1388
+# accuracy :  0.9649
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step 
+# acc_score :  0.9649122807017544
+
+
 
 
 

@@ -7,6 +7,8 @@ from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score,mean_squared_error
 
+from tensorflow.keras.callbacks import EarlyStopping
+
 
 # 1. 데이터
 datasets = load_diabetes()
@@ -15,12 +17,18 @@ y = datasets.target
 print(x.shape, y.shape) # (442, 10) (442, )
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, 
-                                train_size=0.8, random_state=333
+                                train_size=0.8, 
+                                random_state=333,
+                                
                                 )
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
 
 scaler.fit(x_train) 
 
@@ -33,18 +41,37 @@ print(np.min(x_test), np.max(x_test))
 
 # 2. 모델 구성
 model = Sequential()
-model.add(Dense(5, input_dim=10))
-model.add(Dense(7, activation='relu'))
-model.add(Dense(3, activation='relu'))
+model.add(Dense(30, input_dim=10, activation='relu'))
+model.add(Dense(60, activation='relu'))
+model.add(Dense(80, activation='relu'))
+model.add(Dense(40, activation='relu'))
 model.add(Dense(1))
 
 # 3. 컴파일, 훈련
 model.compile(loss="mse", optimizer="adam")
+
+import time
+start_time = time.time()
+
+es = EarlyStopping(
+    monitor='val_loss',
+    mode='auto',
+    restore_best_weights=True,
+    patience=50,
+
+)
+
 hist = model.fit(x_train, y_train, 
-          epochs=300, batch_size=32,
+          epochs=500, 
+          batch_size=64,
           validation_split=0.20,
+          callbacks = [es],
           )
-print("========================================")
+
+end_time = time.time()
+print("걸린시간 :", round(end_time-start_time,2), "초")
+
+print("================== 학습 종료 ======================")
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -85,7 +112,7 @@ print("rmse : ", rmse)
 # plt.show()
 
 
-#########################  결과 ########################3
+#########################  결과 ########################
 # Epoch 300/300
 # 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step - loss: 3195.9255 - val_loss: 2501.6262
 # ========================================
@@ -95,7 +122,7 @@ print("rmse : ", rmse)
 # r2 :  0.4941245923104354
 # rmse :  51.78902641766279
 
-#################### minmaxscaler 적용 결과 ############################ 소폭 향상
+#################### minmaxscaler 적용 결과 #############  ==> 하향
 # Epoch 300/300
 # 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - loss: 3344.7378 - val_loss: 2574.7183
 # ========================================
@@ -104,3 +131,37 @@ print("rmse : ", rmse)
 # 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 13ms/step
 # r2 :  0.4612344105433306
 # rmse :  53.44608376861789
+
+#################### Standardscaler 적용 결과 #############  ==> 소폭하향 
+# Epoch 300/300
+# 9/9 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - loss: 3015.5254 - val_loss: 2594.5100
+# 걸린시간 : 17.89 초
+# ================== 학습 종료 ======================
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - loss: 2976.8989 
+# loss :  2976.89892578125
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 14ms/step
+# r2 :  0.4385227655281946 ## 1에 가까울수록 좋고
+# rmse :  54.56096452731435 ### 0에 가까울수록 좋다.
+
+
+################### MaxAbsScaler ############ ==> loss 성능하향 R2/rmse 성능갱신
+# Epoch 284/500
+# 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step - loss: 2261.8884 - val_loss: 2450.7324
+# 걸린시간 : 16.42 초
+# ================== 학습 종료 ======================
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - loss: 3303.5322 
+# loss :  3303.5322265625
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 21ms/step
+# r2 :  0.3769159434983199
+# rmse :  57.47636345664001
+
+################### RobustScaler ############ =============> 성능향상
+# Epoch 162/500
+# 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step - loss: 2241.9290 - val_loss: 2557.2126
+# 걸린시간 : 9.47 초
+# ================== 학습 종료 ======================
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step - loss: 3169.5786 
+# loss :  3169.57861328125
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step
+# r2 :  0.40218118384415724
+# rmse :  56.29900937746963

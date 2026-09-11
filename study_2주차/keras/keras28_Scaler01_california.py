@@ -39,7 +39,7 @@ MinMaxScaler 알고리즘
 # scaler.fit(x) # 실행 준비
 # x = scaler.transform(x) # 실행 준비한걸 변환 시킨다
 
-# print("x 정규화 : ", x)
+# print("x : ", x)
 # '''
 # [[0.53966842 0.78431373 0.0435123  ... 0.00149943 0.5674814  0.21115538]
 #  [0.53802706 0.39215686 0.03822395 ... 0.00114074 0.565356   0.21215139]
@@ -67,14 +67,22 @@ x_train, x_test, y_train, y_test = train_test_split(
     random_state=777,
 ) 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler() # 이상치에 강력
+
 
 # MinMaxScaler 기준은 "x_train" 이다
-scaler.fit(x_train) # <===  x_train 기준!!!, fit에 x_train기준으로 스켈링이 비율이 들어가 있음
+# scaler.fit(x_train) # <===  x_train 기준!!!, fit에 x_train기준으로 스켈링이 비율이 들어가 있음
 
-x_train = scaler.transform(x_train)  # <===  x_train 스케일링 시행
-x_test = scaler.transform(x_test)    # <===  x_test 스케일링 시행
+# x_train = scaler.transform(x_train)  # <===  x_train 스케일링 시행
+# x_test = scaler.transform(x_test)    # <===  x_test 스케일링 시행
+
+x_train = scaler.fit_transform(x_train) # 한줄로 사욯 가능
+x_test = scaler.transform(x_test)    
+
 
 print(np.min(x_train), np.max(x_train)) 
 print(np.min(x_test), np.max(x_test)) 
@@ -97,14 +105,20 @@ model.compile(loss='mse', optimizer='adam')
 
 start_time = time.time() #현재시간을 반환, = 시작시간
 # [기능확인]
+
+import time
+start_time = time.time()
+
 hist = model.fit(x_train, y_train, 
                 epochs=100, batch_size=32,
                 validation_split=0.2
                 ) #batch_size=150
 # fit() 함수였고 기본적으로 출력/반복 기능이 있다.
-end_time = time.time() # 현재시간을 반환, = 끝시간
 
-print("=================================================")
+end_time = time.time() # 현재시간을 반환, = 끝시간
+print("걸린시간 :", round(end_time-start_time,2), "초")
+
+print("=================== 학습 종료 ========================")
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test, )
@@ -150,16 +164,62 @@ print("rmse : ", round(rmse,3))
 # plt.grid() #모눈종이처럼 표시(격자)
 # plt.show()
 
-# ========================= 결과 =============================================
-# Epoch 100/100
-# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 837us/step - loss: 0.4525 - val_loss: 0.4784
-# =================================================
-# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 596us/step - loss: 0.4649
-# loss : 0.4649162292480469
-# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 434us/step
-# r2 :  0.639
-# rmse :  0.682
+######################## 결과 ##################################################
 
+# Epoch 100/100
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 807us/step - loss: 0.4926 - val_loss: 0.5594
+# =================================================
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 579us/step - loss: 0.5388
+# loss : 0.538833737373352
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 472us/step
+# r2 :  0.577
+# rmse :  0.734
+
+
+######################## train_test 분리 전 MinMaxScaler 적용 결과 ################## ==> 하향
+# Epoch 100/100
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 852us/step - loss: 1.3361 - val_loss: 1.3667
+# =================================================
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 620us/step - loss: 1.2891
+# loss : 1.2890541553497314
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 399us/step
+# r2 :  -0.0
+# rmse :  1.135
+
+# ####################### StandardScaler 적용 결과 ############## ==> 향상
+# Epoch 100/100
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 834us/step - loss: 0.3711 - val_loss: 0.4006
+# 걸린시간 : 37.61 초
+# =================== 학습 종료 ========================
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 607us/step - loss: 0.3609
+# loss : 0.3609026074409485
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 481us/step
+# r2 :  0.72
+# rmse :  0.601
+
+# ####################### MaxAbsScaler 적용 결과 ############## ==> 성능하향
+# Epoch 100/100
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 889us/step - loss: 0.4877 - val_loss: 0.4929
+# 걸린시간 : 38.16 초
+# =================== 학습 종료 ========================
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 606us/step - loss: 0.4673
+# loss : 0.4672805368900299
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 422us/step
+# r2 :  0.637
+# rmse :  0.684
+
+
+# ####################### RobustScaler 적용 결과 ############## ==> 성능향상
+# Epoch 100/100
+# 413/413 ━━━━━━━━━━━━━━━━━━━━ 0s 839us/step - loss: 0.3674 - val_loss: 0.3792
+# 걸린시간 : 38.12 초
+# =================== 학습 종료 ========================
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 588us/step - loss: 0.3700
+# loss : 0.3699517250061035
+# 129/129 ━━━━━━━━━━━━━━━━━━━━ 0s 331us/step
+# r2 :  0.713
+# rmse :  0.608
+# 이상치에 강력한 놈 
 
 
 

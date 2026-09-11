@@ -1,4 +1,4 @@
-#13-보스턴 copy
+#19-3 카피
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -13,8 +13,11 @@ import numpy as np
 print(x_train.shape, x_test.shape) #(404, 13) (102, 13)
 print(y_train.shape, y_test.shape) #(404,) (102,)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 
 scaler.fit(x_train) 
 
@@ -35,10 +38,16 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 # mse 계산 = (y트레인 - y트레인 예측값)의 제곱을 합해서 총 데이터 갯수로 나눠준다 (식 확인)
 # 파이썬은 인터프리터언어로 epochs 할때마다 loss 값을 계산하여 W(가중치)를 갱신한다
+
+import time
+start_time = time.time()
+
 hist = model.fit(x_train, y_train, 
           epochs=200, batch_size=64,
           validation_split=0.2,
           )
+end_time = time.time()
+print("걸린시간 :", round(end_time-start_time,2), "초")
 
 # 훈련이 종료되면 마지막 W값이 정해진다.
 
@@ -95,7 +104,7 @@ print("rmse : ", rmse)
 # r2 :  0.19459107175796264
 # rmse :  8.188121812667095
 
-############################ MinMaxScaler 후 ########################   향상
+############################ MinMaxScaler 후 ########################  ===> 향상
 # Epoch 200/200
 # 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 39.4716 - val_loss: 41.4484
 # =====================================
@@ -104,3 +113,37 @@ print("rmse : ", rmse)
 # 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step
 # r2 :  0.5195332540051056
 # rmse :  6.324231259402225
+
+############################ StandardScaler 후 ########################  ===> 향상
+# Epoch 200/200
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 20.8262 - val_loss: 24.7887
+# 걸린시간 : 11.3 초
+# =====================================
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - loss: 27.6119
+# 27.611854553222656
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 11ms/step
+# r2 :  0.6683015685118041
+# rmse :  5.25469827726185
+
+############################ MaxAbsScaler 후 ########################  ===> loss 하향, R2/Rmse 향상
+# Epoch 200/200
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 45.3736 - val_loss: 48.7276
+# 걸린시간 : 11.03 초
+# =====================================
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step - loss: 48.1005 
+# 48.100486755371094
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step
+# r2 :  0.4221737332224058
+# rmse :  6.935451118881572
+
+################### RobustScaler ##########################  ====> loss, R2, Rmse 성능개선
+
+# Epoch 200/200
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 18.8596 - val_loss: 18.9100
+# 걸린시간 : 11.13 초
+# =====================================
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step - loss: 21.9206 
+# 21.92060661315918
+# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step 
+# r2 :  0.7366699474761296
+# rmse :  4.681944788547605

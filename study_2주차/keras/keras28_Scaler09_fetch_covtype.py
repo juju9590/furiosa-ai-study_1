@@ -1,3 +1,5 @@
+# 23-3 카피
+
 from sklearn.datasets import fetch_covtype # 시간체크, 배치사이즈 크게 하기
 
 # acc = 0.93 이상
@@ -97,8 +99,13 @@ x_train, x_test, y_train, y_test = train_test_split(x,y,
                                                     )
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
+
 
 scaler.fit(x_train) 
 
@@ -176,3 +183,39 @@ print("acc_score :", acc_score)
 # 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 428us/step 
 # acc_score : 0.747855046771598
 
+
+###################### StandardScaler 적용 후 ################## =======> 향상
+
+# Epoch 10/10
+# 2906/2906 ━━━━━━━━━━━━━━━━━━━━ 3s 929us/step - acc: 0.7606 - loss: 0.5597 - val_acc: 0.7608 - val_loss: 0.5611
+# 걸린시간 : 28.665 초
+# ======================== 학습종료 =======================
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 668us/step - acc: 0.7617 - loss: 0.5610
+# loss : 0.5609884858131409
+# acc : 0.7616584897041321
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 424us/step 
+# acc_score : 0.7616584769756375
+
+
+###################### MaxAbsScaler 적용 후 ################## =======> 성능 하향
+
+# 2906/2906 ━━━━━━━━━━━━━━━━━━━━ 3s 924us/step - acc: 0.7443 - loss: 0.5973 - val_acc: 0.7446 - val_loss: 0.5952
+# 걸린시간 : 28.52 초
+# ======================== 학습종료 =======================
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 660us/step - acc: 0.7441 - loss: 0.5971 
+# loss : 0.5971131920814514
+# acc : 0.7441374063491821
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 425us/step 
+# acc_score : 0.7441374146966946
+
+###################### RobustScaler 적용 후 ################## =======> 성능 개선
+
+# Epoch 10/10
+# 2906/2906 ━━━━━━━━━━━━━━━━━━━━ 3s 941us/step - acc: 0.7636 - loss: 0.5473 - val_acc: 0.7661 - val_loss: 0.5466
+# 걸린시간 : 28.671 초
+# ======================== 학습종료 =======================
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 663us/step - acc: 0.7665 - loss: 0.5480 
+# loss : 0.5480256080627441
+# acc : 0.7665206789970398
+# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 412us/step 
+# acc_score : 0.7665206578143421

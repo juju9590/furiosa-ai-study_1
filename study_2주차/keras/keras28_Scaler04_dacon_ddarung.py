@@ -1,4 +1,4 @@
-
+# 19-4 카피
 
 import numpy as np # 수치 계산에 특화
 import pandas as pd # sklearn 만큼 강력함
@@ -59,8 +59,13 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
+
 
 scaler.fit(x_train) 
 
@@ -81,10 +86,16 @@ model.add(Dense(1))
 
 # 3. 컴파일, 훈련
 model.compile(loss="mse", optimizer="adam")
+
+import time
+start_time = time.time()
 hist = model.fit(x_train, y_train, 
                 epochs=500, batch_size=160,
                 validation_split=0.2,
                 )
+end_time = time.time()
+
+print("걸린시간 :", round(end_time-start_time,2), "초")
 
 print("==============================================")
 
@@ -123,7 +134,7 @@ print("rmse : ", np.sqrt(mean_squared_error(y_test, y_pred)))
 # plt.grid() #모눈종이처럼 표시(격자)
 # plt.show()
 
-############################ 평가 ################################
+############################ 평가 ##################
 # Epoch 500/500
 # 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step - loss: 3090.9402 - val_loss: 3062.1284
 # ==============================================
@@ -133,7 +144,7 @@ print("rmse : ", np.sqrt(mean_squared_error(y_test, y_pred)))
 # r2 :  0.6247159344553991
 # rmse :  51.98765227405579
 
-######################### MinMaxScaler ############################## ==> 소폭 향상
+######################### MinMaxScaler ############### ==> 아주아주 소폭 향상
 # Epoch 500/500
 # 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step - loss: 2864.2085 - val_loss: 3094.8616
 # ==============================================
@@ -142,3 +153,37 @@ print("rmse : ", np.sqrt(mean_squared_error(y_test, y_pred)))
 # 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
 # r2 :  0.6298115715996777
 # rmse :  51.633499731080285
+
+######################### StandardScaler ############### ==>  향상
+# Epoch 500/500
+# 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step - loss: 2581.3792 - val_loss: 2822.3831
+# 걸린시간 : 26.94 초
+# ==============================================
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - loss: 2389.9885
+# loss :  2389.988525390625
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+# r2 :  0.6681395133649817
+# rmse :  48.887509786399406
+
+
+######################### MaxAbscaler ############### ==>  loss 하향, r2, rmse 향상
+# Epoch 500/500
+# 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step - loss: 2918.9011 - val_loss: 3131.4092
+# 걸린시간 : 27.03 초
+# ==============================================
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 1ms/step - loss: 2709.3752 
+# loss :  2709.375244140625
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+# r2 :  0.62379127965514
+# rmse :  52.05165853357736
+
+######################### RobustScaler ############### ==>  loss 성능개선, R2, Rmse 개선
+# Epoch 500/500
+# 5/5 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step - loss: 2630.2822 - val_loss: 2824.8733
+# 걸린시간 : 27.45 초
+# ==============================================
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 785us/step - loss: 2383.5959
+# loss :  2383.595947265625
+# 13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+# r2 :  0.6690272155320054
+# rmse :  48.82208077283538

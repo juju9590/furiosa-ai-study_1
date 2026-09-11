@@ -1,5 +1,8 @@
 # https://www.kaggle.com/competitions/santander-customer-transaction-prediction
 
+# 22 카피
+
+
 import numpy as np
 import pandas as pd
 import time
@@ -39,8 +42,12 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 
                  )
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
 
 scaler.fit(x_train) 
 
@@ -54,11 +61,11 @@ print(x_train.shape, y_train.shape) #(140000, 200) (140000,)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, input_dim=200, activation='relu'))
-model.add(Dense(160, activation='relu'))
-model.add(Dense(280, activation='relu'))
-model.add(Dense(140, activation='relu'))
+model.add(Dense(30, input_dim=200, activation='relu'))
+model.add(Dense(30, activation='relu'))
 model.add(Dense(80, activation='relu'))
+model.add(Dense(40, activation='relu'))
+model.add(Dense(20, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 #3. 컴파일, 훈련
@@ -72,14 +79,14 @@ es = EarlyStopping(
     monitor='val_loss',
     mode='min',
     restore_best_weights=True,
-    patience=500,
+    patience=50,
 )
 
 start_time = time.time()
 model.fit(
     x_train, y_train,
     epochs=100,
-    batch_size=100000,
+    batch_size=1000,
     verbose=1,
     validation_split=0.3,
     callbacks=[es],
@@ -133,3 +140,47 @@ print("acc_score : ", round(acc_score,4))
 # acc :  0.9057
 # 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 380us/step 
 # acc_score :  0.9056
+
+################################## StandardScaler 적용 후 ##################### ==> 향상
+# Epoch 100/100
+# 1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 248ms/step - acc: 0.9217 - loss: 0.2134 - val_acc: 0.9062 - val_loss: 0.2527
+# 걸린시간 :  26.35 초
+# ================================= 학습 종료 =================================
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 656us/step - acc: 0.9089 - loss: 0.2468
+# loss :  0.2468
+# acc :  0.9089
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 387us/step
+# acc_score :  0.9089
+
+################################## StandardScaler + Batch_size & patience 재설정 ##################### ==> 향상
+# Epoch 56/100
+# 98/98 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - acc: 0.9548 - loss: 0.1250 - val_acc: 0.8809 - val_loss: 0.4542
+# 걸린시간 :  13.44 초
+# ================================= 학습 종료 =================================
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 573us/step - acc: 0.9102 - loss: 0.2456 
+# loss :  0.2456
+# acc :  0.9102
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 320us/step 
+# acc_score :  0.9102
+
+################################## MaxAbsScaler ##################### ==> loss 향상, acc 향상
+# Epoch 66/100
+# 98/98 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - acc: 0.9211 - loss: 0.2164 - val_acc: 0.9099 - val_loss: 0.2492
+# 걸린시간 :  16.79 초
+# ================================= 학습 종료 =================================
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 610us/step - acc: 0.9107 - loss: 0.2414 
+# loss :  0.2414
+# acc :  0.9107
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 334us/step 
+# acc_score :  0.9106
+
+################################## RobustScaler ##################### ==> 성능하향
+# Epoch 56/100
+# 98/98 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - acc: 0.9563 - loss: 0.1333 - val_acc: 0.8878 - val_loss: 0.3844
+# 걸린시간 :  13.8 초
+# ================================= 학습 종료 =================================
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 632us/step - acc: 0.9092 - loss: 0.2440 
+# loss :  0.244
+# acc :  0.9092
+# 1875/1875 ━━━━━━━━━━━━━━━━━━━━ 1s 313us/step 
+# acc_score :  0.9092
