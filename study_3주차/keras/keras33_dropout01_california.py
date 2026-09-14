@@ -5,7 +5,7 @@
 
 from sklearn.datasets import fetch_california_housing
 from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,8 +36,6 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, Ro
 # scaler = MaxAbsScaler()
 scaler = RobustScaler() # 이상치에 강력
 
-# x_train = scaler.transform(x_train)  # <===  x_train 스케일링 시행
-# x_test = scaler.transform(x_test)    # <===  x_test 스케일링 시행
 
 x_train = scaler.fit_transform(x_train) # 한줄로 사욯 가능
 x_test = scaler.transform(x_test)    
@@ -49,9 +47,16 @@ print(np.min(x_test), np.max(x_test))
 #2. 모델구성
 model = Sequential()
 model.add(Dense(2, activation='relu', input_dim=8))
+model.add(Dropout(0.2))
+
 model.add(Dense(6, activation='relu'))
+model.add(Dropout(0.3))
+
 model.add(Dense(12))
+model.add(Dropout(0.5))
+
 model.add(Dense(6, activation='relu'))
+
 model.add(Dense(1))
 
 
@@ -63,40 +68,17 @@ model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(
     monitor='val_loss',
     mode='min',
-    patience=20,
+    patience=30,
     restore_best_weights=True,
     verbose=1, #훈련중에 es가 진행되는지 볼 수 있음
 )
 
-####### mcp save 파일명 만들기 (일반적일 파일명도 동일) ########### 시작
-import datetime
-date = datetime.datetime.now() # 현재 시간 반환
-print(date) #2026-09-14 11:42:10.818328
-print(type(date)) # <class 'datetime.datetime'>
-date = date.strftime("%m%d_%H%M") #string for time 함수로 문자로 준비/ 소문자, 대문자 구분 
-print(date) # 0914_1147
-print(type(date)) # <class 'str'>
-
-path ='./_save/keras30/'
-filename = '{epoch:04d}-{val_loss:.4f}.keras'
-# d : int 형태, f : float 형태
-filepath = "".join([path, "k30_", date, "-" ,filename])
-
-# 파일명 조합 예시
-# './_save/keras30/' + 'k30_' + '0914_1147' + '0530-0.001 .keras'
-# 파일명 : k30_0914_1323-0064-0.3791.keras
-
-####### mcp save 파일명 만들기 (일반적일 파일명도 동일) ########### 끝
-
-
-# exit()
-
 mcp = ModelCheckpoint(
     monitor='val_loss',
     mode='auto',
-    save_best_only=True, 
-    filepath=filepath, 
-    verbose=1, 
+    save_best_only=True, # 가장 최적의 가중치
+    filepath=path + 'keras30_mcp1.keras', # 저장 파일명
+    verbose=1, #훈련중에 mcp가 진행되는지 볼 수 있음
 )
 
 start_time = time.time()
@@ -107,7 +89,10 @@ hist = model.fit(x_train,
                 validation_split=0.2,
                 callbacks = [es, mcp],
                 verbose=1,                              
-                ) 
+                )
+
+
+# 훈련 중 가장 최적의 가중치를 자동으로 저장할 수 있도록 하는 장치 
 
 end_time = time.time() # 현재시간을 반환, = 끝시간
 print("걸린시간 :", round(end_time-start_time,2), "초")
@@ -131,8 +116,14 @@ print("rmse : ", round(rmse,3))
 
 
 
-######################## 결과 ##################################################
+######## 결과 save
 
-# r2 :  0.72
-# mse :  0.361
-# rmse :  0.601
+# loss(mse) : 0.37408486008644104
+# r2 :  0.71
+# rmse :  0.612
+
+######## 결과 dropout
+# r2 :  0.626
+# mse :  0.482
+# rmse :  0.695
+
