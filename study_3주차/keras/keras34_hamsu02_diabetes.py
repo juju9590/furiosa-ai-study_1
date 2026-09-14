@@ -1,8 +1,8 @@
 # 19-2 copy
 
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,Dropout
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense,Dropout,Input
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score,mean_squared_error
@@ -40,22 +40,29 @@ print(np.min(x_test), np.max(x_test))
 
 
 # 2. 모델 구성
-model = Sequential()
-model.add(Dense(30, input_dim=10, activation='relu'))
-model.add(Dropout(0.2)) #하이퍼파라미터 
+# model = Sequential()
+# model.add(Dense(30, input_dim=10, activation='relu'))
+# model.add(Dropout(0.2)) #하이퍼파라미터
+# model.add(Dense(60, activation='relu'))
+# model.add(Dense(80, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(40, activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Dense(1))
 
+################# 함수형 모델
+input1 = Input(shape=(10,))                                         # 입력층
+dense1 = Dense(30, activation='relu', name='layer_1')(input1)        
+drop1 = Dropout(0.2)(dense1)
+dense2 = Dense(60, activation='relu', name='layer_2')(drop1)        
+dense3 = Dense(80, name='layer_3')(dense2)                           
+drop2 = Dropout(0.5)(dense3)
+dense4 = Dense(40, activation='relu', name='layer_4')(drop2)  
+drop3 = Dropout(0.3)(dense4)
+output1 = Dense(1)(drop3)
 
-model.add(Dense(60, activation='relu'))
+model = Model(inputs=input1, outputs=output1)                       # 모델정의
 
-model.add(Dense(80, activation='relu'))
-model.add(Dropout(0.5))
-
-
-model.add(Dense(40, activation='relu'))
-model.add(Dropout(0.3))
-
-
-model.add(Dense(1))
 
 # 3. 컴파일, 훈련
 model.compile(loss="mse", optimizer="adam")
@@ -111,3 +118,11 @@ print("rmse : ", rmse)
 # r2 :  0.4534264267324164
 # rmse :  53.8319705855693
 # PS C:\study> 
+
+
+################# 함수형 모델
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 2ms/step - loss: 2965.2178 
+# loss :  2965.2177734375
+# 3/3 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step
+# r2 :  0.44072600458401245
+# rmse :  54.45381057743559

@@ -1,18 +1,19 @@
-# 30-1 카피
+# 33-1 카피
 
 # import ssl
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 from sklearn.datasets import fetch_california_housing
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.models import Sequential, load_model, Model
+from tensorflow.keras.layers import Dense, Dropout, Input
 from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 
-path ='./_save/keras30/'
+path ='./_save/keras34/'
+
 
 #1. 데이터
 datasets = fetch_california_housing() 
@@ -31,10 +32,10 @@ x_train, x_test, y_train, y_test = train_test_split(
 ) 
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-# scaler = MinMaxScaler()
+scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-scaler = RobustScaler() # 이상치에 강력
+# scaler = RobustScaler() # 이상치에 강력
 
 
 x_train = scaler.fit_transform(x_train) # 한줄로 사욯 가능
@@ -45,21 +46,28 @@ print(np.min(x_train), np.max(x_train))
 print(np.min(x_test), np.max(x_test)) 
 
 #2. 모델구성
-model = Sequential()
-model.add(Dense(2, activation='relu', input_dim=8))
-model.add(Dropout(0.2))
+# model = Sequential()
+# model.add(Dense(2, activation='relu', input_dim=8))
+# model.add(Dropout(0.2))
+# model.add(Dense(6, activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Dense(12))
+# model.add(Dropout(0.5))
+# model.add(Dense(6, activation='relu'))
+# model.add(Dense(1))
 
-model.add(Dense(6, activation='relu'))
-model.add(Dropout(0.3))
+################# 함수형 모델
+input1 = Input(shape=(8,))                                         # 입력층
+dense1 = Dense(2, activation='relu', name='layer_1')(input1)        # 첫번째층
+drop1 = Dropout(0.2)(dense1)
+dense2 = Dense(6, activation='relu', name='layer_2')(drop1)         # 두번째층
+drop2 = Dropout(0.3)(dense2)
+dense3 = Dense(12, name='layer_3')(drop2)                           # 세번째층
+drop3 = Dropout(0.5)(dense3)
+dense4 = Dense(6, activation='relu', name='layer_4')(drop3)         # 네번째층
+output1 = Dense(1)(dense4)
 
-model.add(Dense(12))
-model.add(Dropout(0.5))
-
-model.add(Dense(6, activation='relu'))
-
-model.add(Dense(1))
-
-# Dropout 은 노드가 있지만
+model = Model(inputs=input1, outputs=output1)                       # 모델정의
 
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -79,7 +87,7 @@ mcp = ModelCheckpoint(
     monitor='val_loss',
     mode='auto',
     save_best_only=True, # 가장 최적의 가중치
-    filepath=path + 'keras30_mcp1.keras', # 저장 파일명
+    filepath=path + 'keras34_mcp1.keras', # 저장 파일명
     verbose=1, #훈련중에 mcp가 진행되는지 볼 수 있음
 )
 
@@ -128,4 +136,9 @@ print("rmse : ", round(rmse,3))
 # r2 :  0.626
 # mse :  0.482
 # rmse :  0.695
+
+######## 결과 함수형 모델 
+# r2 :  0.554
+# mse :  0.574
+# rmse :  0.758
 
