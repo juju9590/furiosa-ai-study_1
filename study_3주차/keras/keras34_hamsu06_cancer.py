@@ -105,14 +105,14 @@ input1 = Input(shape=(30,))                                         # 입력층
 dense1 = Dense(30, activation='relu', name='layer_1')(input1) 
 dense2 = Dense(40, activation='relu', name='layer_2')(dense1) 
 drop1 = Dropout(0.5)(dense2)
-dense3 = Dense(40, activation='relu', name='layer_2')(drop1)      
-drop2 = Dropout(0.5)(dense2)
-dense3 = Dense(4, activation='relu', name='layer_3')(drop2)
-drop2 = Dropout(0.5)(dense2)
-dense3 = Dense(4, activation='relu', name='layer_3')(drop2)
-drop2 = Dropout(0.5)(dense2)
-dense3 = Dense(4, activation='relu', name='layer_3')(drop2)  
-output1 = Dense(1)(dense3)
+dense3 = Dense(40, activation='relu', name='layer_3')(drop1)      
+drop2 = Dropout(0.3)(dense3)
+dense4 = Dense(40, activation='relu', name='layer_4')(drop2)
+drop3 = Dropout(0.2)(dense4)
+dense5 = Dense(40, activation='relu', name='layer_5')(drop3)
+drop4 = Dropout(0.5)(dense5)
+dense6 = Dense(40, activation='relu', name='layer_6')(drop4)  
+output1 = Dense(1)(dense6)
 
 model = Model(inputs=input1, outputs=output1)                       # 모델정의
 
@@ -233,6 +233,15 @@ print("acc_score : ", acc_score ) # acc_score :  0.9122807017543859
 # =========================================================
 # 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step 
 # acc_score :  0.9649122807017544
+
+
+############# 함수형 모델 ==> 하향
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step - accuracy: 0.9123 - loss: 0.3123
+# loss :  0.3123
+# accuracy :  0.9123
+# =========================================================
+# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step
+# acc_score :  0.672514619883041
 
 
 

@@ -1,11 +1,13 @@
-# 31-9 카피
+# 23-3 카피
 
-from sklearn.datasets import fetch_covtype 
+from sklearn.datasets import fetch_covtype # 시간체크, 배치사이즈 크게 하기
+
+# acc = 0.93 이상
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.callbacks import EarlyStopping
 import time
@@ -19,8 +21,15 @@ x = datasets.data
 y = datasets.target
 print(x.shape, y.shape) #(581012, 54) (581012,)
 
-print(np.unique(y, return_counts=True)) 
-#(array([1, 2, 3, 4, 5, 6, 7], dtype=int32), array([211840, 283301,  35754,   2747,   9493,  17367,  20510]))
+print(np.unique(y, return_counts=True)) #(array([1, 2, 3, 4, 5, 6, 7], dtype=int32), array([211840, 283301,  35754,   2747,   9493,  17367,  20510]))
+
+
+# print("================= 원핫1. to_categorical  =====================")
+##########  to_categorical ###################
+# from tensorflow.keras.utils import to_categorical 
+# y = to_categorical(y)
+# print(y)
+# print(y.shape) #(581012, 8)
 
 print("================= 원핫2. pd.get_dummies()  =====================")
 
@@ -36,36 +45,31 @@ x_train, x_test, y_train, y_test = train_test_split(x,y,
                                                     )
 
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-# scaler = MinMaxScaler()
-# scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-scaler = RobustScaler()
+# from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# # scaler = MinMaxScaler()
+# # scaler = StandardScaler()
+# # scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
-scaler.fit(x_train) 
+# scaler.fit(x_train) 
 
-x_train = scaler.transform(x_train)  
-x_test = scaler.transform(x_test)    
+# x_train = scaler.transform(x_train)  
+# x_test = scaler.transform(x_test)    
 
-print(np.min(x_train), np.max(x_train)) 
+# print(np.min(x_train), np.max(x_train)) 
 print(np.min(x_test), np.max(x_test))
 
 #2. 모델구성
-
-
-# model = Sequential()
-# model.add(Dense(10, input_dim=54, activation='relu'))
-# model.add(Dense(10, activation='relu'))
-# model.add(Dense(10, activation='relu'))
-# model.add(Dense(10, activation='relu'))
-# model.add(Dense(10, activation='relu'))
-# model.add(Dense(7, activation='softmax'))
-
-path ='./_save/keras31/'
-model = load_model(path +'k31_09_0914_1504-0010-0.5515.keras')
+model = Sequential()
+model.add(Dense(10, input_dim=54, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(7, activation='softmax'))
 
 #3. 컴파일, 훈련
-# model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'],)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'],)
 
 # from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -100,17 +104,17 @@ model = load_model(path +'k31_09_0914_1504-0010-0.5515.keras')
 #     verbose=1,
 # )
 
-# start_time=time.time()
-# model.fit(x_train, y_train,
-#           epochs=10,
-#           batch_size=128,
-#           verbose=1,
-#           validation_split=0.2,
-#           callbacks=[es,mcp],
-#           )
-# end_time=time.time()
-# print("걸린시간 :", round(end_time-start_time,3),"초")
-# print("======================== 학습종료 =======================")
+start_time=time.time()
+model.fit(x_train, y_train,
+          epochs=50,
+          batch_size=128,
+          verbose=1,
+          validation_split=0.2,
+        #   callbacks=[es,mcp],
+          )
+end_time=time.time()
+print("걸린시간 :", round(end_time-start_time,3),"초")
+print("======================== 학습종료 =======================")
 
 
 #4. 예측, 평가
@@ -132,8 +136,9 @@ print("acc_score :", acc_score)
 # 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 413us/step 
 # acc_score : 0.7656514892042374
 
-#### 결과 load
-# loss : 0.5519099235534668
-# acc : 0.7656514644622803
-# 3632/3632 ━━━━━━━━━━━━━━━━━━━━ 2s 413us/step 
-# acc_score : 0.7656514892042374
+# epochs=50
+########### GPU
+# 걸린시간 : 258.822 초
+
+########### CPU ㅇ
+# 걸린시간 : 143.341 초 

@@ -84,10 +84,6 @@ output1 = Dense(1)(dense3)
 model = Model(inputs=input1, outputs=output1)                       # 모델정의
 
 
-
-
-
-
 # 3. 컴파일, 훈련
 model.compile(loss="mse", optimizer="adam")
 
@@ -177,3 +173,10 @@ print("rmse : ", rmse)
 # 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 844us/step
 # r2 :  0.20677465200424194
 # rmse :  159.21472946346705
+
+########### 함수형 모델
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 744us/step - loss: 24240.1719
+# loss :  24240.171875
+# 69/69 ━━━━━━━━━━━━━━━━━━━━ 0s 759us/step
+# r2 :  0.2414821982383728
+# rmse :  155.69254934605894

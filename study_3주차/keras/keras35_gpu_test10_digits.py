@@ -5,7 +5,7 @@ from sklearn.datasets import load_digits
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import time, datetime
@@ -47,35 +47,33 @@ print(x_train.shape, x_test.shape) # (1437, 64) (360, 64)
 print(y_train.shape, y_test.shape) # (1437, 10) (360, 10)
 
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-# scaler = MinMaxScaler() # 1번
-# scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-scaler = RobustScaler()
+# from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# # scaler = MinMaxScaler() # 1번
+# # scaler = StandardScaler()
+# # scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
 
-scaler.fit(x_train) 
+# scaler.fit(x_train) 
 
-x_train = scaler.transform(x_train)  
-x_test = scaler.transform(x_test)    
+# x_train = scaler.transform(x_train)  
+# x_test = scaler.transform(x_test)    
 
-print(np.min(x_train), np.max(x_train)) 
-print(np.min(x_test), np.max(x_test))
+# print(np.min(x_train), np.max(x_train)) 
+# print(np.min(x_test), np.max(x_test))
 
 #2. 모델구성
-# model = Sequential()
-# model.add(Dense(30, input_dim=64, activation='relu'))
-# model.add(Dense(80, activation='relu'))
-# model.add(Dense(100, activation='relu'))
-# model.add(Dense(80, activation='relu'))
-# model.add(Dense(40, activation='relu'))
-# model.add(Dense(10, activation='softmax'))
+model = Sequential()
+model.add(Dense(30, input_dim=64, activation='relu'))
+model.add(Dense(80, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(80, activation='relu'))
+model.add(Dense(40, activation='relu'))
+model.add(Dense(10, activation='softmax'))
 
-path ='./_save/keras31/'
-model = load_model(path + 'k31_10_1409-1616-0010-0.2652.keras')
 
 #3. 컴파일, 훈련
-# model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'],)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'],)
 
 # es = EarlyStopping(
 #     monitor='val_loss',
@@ -101,18 +99,18 @@ model = load_model(path + 'k31_10_1409-1616-0010-0.2652.keras')
 #     verbose=1,
 # )
 
-# start_time = time.time()
-# model.fit(x_train, y_train,
-#           epochs=1000,
-#           batch_size=4,
-#           validation_split=0.2,
-#           callbacks=[es,mcp],
-#           )
-# end_time = time.time()
+start_time = time.time()
+model.fit(x_train, y_train,
+          epochs=100,
+          batch_size=4,
+          validation_split=0.2,
+        #   callbacks=[es,mcp],
+          )
+end_time = time.time()
 
-# print("걸린시간 :", round(end_time-start_time,2), "초")
+print("걸린시간 :", round(end_time-start_time,2), "초")
 
-# print("================= 훈련 종료 =====================")
+print("================= 훈련 종료 =====================")
 
 #4. 예측, 평가
 result = model.evaluate(x_test, y_test)
@@ -132,11 +130,12 @@ print("acc_score :", acc_score)
 # 12/12 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step 
 # acc_score : 0.9666666666666667
 
-########### 결과 load
-# loss : 0.14555810391902924
-# acc : 0.9666666388511658
-# 12/12 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step 
-# acc_score : 0.9666666666666667
+# epochs=100
+########### GPU
+# 걸린시간 :  
+
+########### CPU 
+# 걸린시간 : 30.87 초
 
 
 
