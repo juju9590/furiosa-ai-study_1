@@ -6,6 +6,7 @@ from tensorflow.keras.layers import Dense, Conv2D
 
 model = Sequential()
 model.add(Conv2D(10,(3,3),input_shape=(10,10,1))) 
+                                     # height, width, channel
 model.add(Conv2D(5,(2,2))) 
 
 model.summary()
