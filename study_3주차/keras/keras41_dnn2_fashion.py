@@ -31,7 +31,7 @@ x_test = x_test/255
 
 x_train = x_train.reshape(-1,28*28*1)
 x_test = x_test.reshape(-1,28*28*1)
-print(x_train.shape, x_test.shape) #(60000, 784) (10000, 784)
+# print(x_train.shape, x_test.shape) #(60000, 784) (10000, 784)
 
 # exit()
 
@@ -58,18 +58,22 @@ model = Sequential()
 model.add(Dense(512, input_shape=(28*28,), activation='relu'))
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.2))
+model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.3))
 model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(32, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(16, activation='relu'))
 
 model.add(Dense(10, activation='softmax'))  
 
@@ -84,7 +88,7 @@ es = EarlyStopping(
     mode='min',
     restore_best_weights=True,
     verbose=1,
-    patience=20,
+    patience=200,
 )
 
 import datetime
@@ -107,7 +111,7 @@ mcp = ModelCheckpoint(
 start_time=time.time()
 model.fit(x_train,y_train,
           epochs=70, 
-          batch_size=32, 
+          batch_size=64, 
           verbose=1,
           validation_split=0.2,
         #   callbacks = [es, mcp],

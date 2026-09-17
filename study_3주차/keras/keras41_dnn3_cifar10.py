@@ -51,25 +51,28 @@ y_test = ohe.fit_transform(y_test)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(1024, input_shape=(32*32*3,), activation='relu'))
+model.add(Dense(512, input_shape=(32*32*3,), activation='relu'))
 model.add(Dense(512, activation='relu'))
 model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.2))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(128, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(32, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
 
 model.add(Dense(10, activation='softmax')) 
 model.summary()
@@ -106,7 +109,7 @@ mcp = ModelCheckpoint(
 start_time=time.time()
 model.fit(x_train,y_train,
           epochs=100, 
-          batch_size=64, 
+          batch_size=2048, 
           verbose=1,
           validation_split=0.2,
         #   callbacks = [es, mcp],
@@ -135,24 +138,15 @@ print ('걸린시간 : ', round(end_time-start_time,2),'초' )
 # acc_score :  0.7719
 # 걸린시간 :  275.09 초
 
-### DNN 1차
-# loss :  1.96
-# acc :  0.26
-# acc_score :  0.2638
-# 걸린시간 :  44.06 초
-
-### DNN 2차
-# loss :  1.75
-# acc :  0.37
-# acc_score :  0.3668
-# 걸린시간 :  47.36 초
-
 ### DNN 3차
 # loss :  1.6
 # acc :  0.44
 # acc_score :  0.4441
 # 걸린시간 :  55.33 초
 
-
-
+### DNN 4차 
+# loss :  1.85
+# acc :  0.47
+# acc_score :  0.4713
+# 걸린시간 :  35.14 초
 
