@@ -10,14 +10,14 @@ from tensorflow.keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2
 
 #2. 모델구성
 model = Sequential()
-model.add(Conv2D(10, (2,2), input_shape=(10,10,1), 
+model.add(Conv2D(10, (2,2), input_shape=(10,10,1), #10,10,10
                  padding='same', 
                  strides=1, 
                  ))
 
-model.add(MaxPooling2D()) # Conv2D 다음에 쓴다 
+model.add(MaxPooling2D()) # Conv2D 다음에 쓴다 # 5,5,10 ==> 맥스풀링하면 반으로 줄어든다.
 
-model.add(Conv2D(filters=9, kernel_size=(3,3), 
+model.add(Conv2D(filters=9, kernel_size=(3,3),  #8,8,9
                  padding='valid',
                  strides=2,
                  ))
