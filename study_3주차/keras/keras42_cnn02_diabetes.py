@@ -2,7 +2,7 @@
 
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D, GlobalAveragePooling2D
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score,mean_squared_error
@@ -25,10 +25,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 # scaler = MinMaxScaler()
-# scaler = StandardScaler()
+scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-scaler = RobustScaler()
-
+# scaler = RobustScaler()
 
 scaler.fit(x_train) 
 
@@ -38,23 +37,26 @@ x_test = scaler.transform(x_test)
 print(np.min(x_train), np.max(x_train)) 
 print(np.min(x_test), np.max(x_test))
 
-
 ##### 스케일링 후에 X차원 변경 
-x_train = x_train.reshape(-1,10,1,1)
-x_test = x_test.reshape(-1,10,1,1)
+x_train = x_train.reshape(-1,2,5,1)
+x_test = x_test.reshape(-1,2,5,1)
 
 print(x_train.shape, x_test.shape) #(353, 10, 1, 1) (89, 10, 1, 1)
 print(y_train.shape, y_test.shape) #(353,) (89,)
 
-
 # 2. 모델 구성
 model = Sequential()
-model.add(Conv2D(64, (2,1), input_shape=(10, 1, 1))) 
-model.add(Conv2D(32, (2,1) ,activation='relu' )) 
+model.add(Conv2D(64, (2,1), padding='same', input_shape=(2, 5, 1))) 
+model.add(Conv2D(32, (1,1) ,padding='same', activation='relu' )) 
+model.add(MaxPooling2D())
 
-model.add(Flatten())
+# model.add(Flatten())
+model.add(GlobalAveragePooling2D())
 
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(16, activation='relu'))
+
 model.add(Dense(1,))  
 
 model.summary()
@@ -82,9 +84,6 @@ hist = model.fit(x_train, y_train,
           )
 
 end_time = time.time()
-print("걸린시간 :", round(end_time-start_time,2), "초")
-
-print("================== 학습 종료 ======================")
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -96,6 +95,8 @@ print("r2 : ", r2)
 
 rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 print("rmse : ", rmse)
+print("걸린시간 :", round(end_time-start_time,2), "초")
+
 
 
 ################### RobustScaler ############ =============> 성능향상
@@ -116,7 +117,13 @@ print("rmse : ", rmse)
 # PS C:\study> 
 
 
-######## dnn >>> cnn 
+######## dnn >>> cnn 1차
 # loss :  2825.438232421875
 # r2 :  0.46709000869746176
 # rmse :  53.154849695802106
+
+######## dnn >>> cnn 2차
+# 걸린시간 : 41.96 초
+# loss :  3583.035888671875
+# r2 :  0.32419844951205723
+# rmse :  59.85846215145047

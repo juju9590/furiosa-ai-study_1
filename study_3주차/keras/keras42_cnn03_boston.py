@@ -1,23 +1,20 @@
 #33-3 카피
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten,MaxPooling2D, GlobalAveragePooling2D
 from tensorflow.keras.datasets import boston_housing
 from sklearn.metrics import r2_score,mean_squared_error
 import numpy as np
-
-
-# 텐서플로우에서 데이터셋을 가져올때 아래와 같이 가져오면 된다
 
 (x_train, y_train), (x_test, y_test)= boston_housing.load_data()
 print(x_train.shape, x_test.shape) #(404, 13) (102, 13)
 print(y_train.shape, y_test.shape) #(404,) (102,)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-# scaler = MinMaxScaler()
+scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-scaler = RobustScaler()
+# scaler = RobustScaler()
 
 scaler.fit(x_train) 
 
@@ -27,8 +24,7 @@ x_test = scaler.transform(x_test)
 print(np.min(x_train), np.max(x_train)) 
 print(np.min(x_test), np.max(x_test))
 
-########### X 
-
+########### X 데이터를 CNN에 넣기 위해 4차원으로 변환
 x_train = x_train.reshape(-1,13,1,1)
 x_test = x_test.reshape(-1,13,1,1)
 
@@ -39,12 +35,17 @@ print(y_train.shape, y_test.shape) #
 #2. 모델구성
 model = Sequential()
 
-model.add(Conv2D(64, (2,1), input_shape=(13, 1, 1))) 
-model.add(Conv2D(32, (2,1) ,activation='relu' )) 
+model.add(Conv2D(64, (2,1), padding='same',  input_shape=(13, 1, 1))) 
+model.add(Conv2D(32, (2,1) ,padding='same', activation='relu' )) 
+model.add(Conv2D(32, (1,1) , activation='relu' )) 
 
-model.add(Flatten())
+# model.add(Flatten())
+model.add(GlobalAveragePooling2D())
 
 model.add(Dense(32, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+
 model.add(Dense(1,))  
 
 model.summary()
@@ -52,8 +53,6 @@ model.summary()
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-# mse 계산 = (y트레인 - y트레인 예측값)의 제곱을 합해서 총 데이터 갯수로 나눠준다 (식 확인)
-# 파이썬은 인터프리터언어로 epochs 할때마다 loss 값을 계산하여 W(가중치)를 갱신한다
 
 import time
 start_time = time.time()
@@ -63,11 +62,6 @@ hist = model.fit(x_train, y_train,
           validation_split=0.2,
           )
 end_time = time.time()
-print("걸린시간 :", round(end_time-start_time,2), "초")
-
-# 훈련이 종료되면 마지막 W값이 정해진다.
-
-print("=====================================")
 
 #4. 평가, 성능
 loss = model.evaluate(x_test, y_test, )
@@ -79,99 +73,28 @@ print("r2 : ", r2)
 
 rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 print("rmse : ", rmse)
+print("걸린시간 :", round(end_time-start_time,2), "초")
 
-# print("================== history ===============================")
-# print(hist)
-# print("================== hist.history ==========================")
-# print(hist.history)
-# print("================== loss ==========================")
-# print(hist.history['loss'])
-# print("================== val_loss ==========================")
-# print(hist.history['val_loss'])
 
-# print("================== 시각화 ==========================")
-# import matplotlib.pyplot as plt
-
-# # plt에서 한글 못 읽기 때문에 맑은고딕 폰트 설정 필수
-# # plt.rcParams['font.family']='Malgun Gothic'
-# plt.rc('font', family = 'Hancom Gothic')
-
-# plt.figure(figsize=(9,6))
-# plt.plot(hist.history['loss'], c='red', label='loss')
-# plt.plot(hist.history['val_loss'], c='blue', label='val_loss')
-# # x를 명시하지 않으면 y값을 시간순으로 그려줌
-# plt.legend(loc="upper right") # 우측 상단에 라벨표시(범례)
-# plt.title('보스턴 Loss')
-# plt.xlabel('epochs')
-# plt.ylabel('loss')
-# plt.grid() #모눈종이처럼 표시(격자)
-# plt.show()
-
-# 그래프가 우하향 하고 있다면 훈련 더 시키기
-# 그래프가 핑퐁하고 있다면 하이퍼파라미터 튜닝
-
-################################## 결과 ###################################
-# Epoch 200/200
-# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step - loss: 54.7659 - val_loss: 67.8529
-# =====================================
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step - loss: 67.0453 
-# 67.04534149169922
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step 
-# r2 :  0.19459107175796264
-# rmse :  8.188121812667095
-
-############################ MinMaxScaler 후 ########################  ===> 향상
-# Epoch 200/200
-# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 39.4716 - val_loss: 41.4484
-# =====================================
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step - loss: 39.9959 
-# 39.99590301513672
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step
-# r2 :  0.5195332540051056
-# rmse :  6.324231259402225
-
-############################ StandardScaler 후 ########################  ===> 향상
-# Epoch 200/200
-# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 20.8262 - val_loss: 24.7887
-# 걸린시간 : 11.3 초
-# =====================================
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - loss: 27.6119
-# 27.611854553222656
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 11ms/step
-# r2 :  0.6683015685118041
-# rmse :  5.25469827726185
-
-############################ MaxAbsScaler 후 ########################  ===> loss 하향, R2/Rmse 향상
-# Epoch 200/200
-# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 45.3736 - val_loss: 48.7276
-# 걸린시간 : 11.03 초
-# =====================================
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step - loss: 48.1005 
-# 48.100486755371094
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 10ms/step
-# r2 :  0.4221737332224058
-# rmse :  6.935451118881572
-
-################### RobustScaler ##########################  ====> loss, R2, Rmse 성능개선
-
-# Epoch 200/200
-# 6/6 ━━━━━━━━━━━━━━━━━━━━ 0s 8ms/step - loss: 18.8596 - val_loss: 18.9100
+##### RobustScaler ##########################  ====> loss, R2, Rmse 성능개선
 # 걸린시간 : 11.13 초
-# =====================================
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step - loss: 21.9206 
 # 21.92060661315918
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step 
 # r2 :  0.7366699474761296
 # rmse :  4.681944788547605
 
 ############ 드랍아웃 적용 == 하향
 # 39.65457534790039
-# 4/4 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step 
 # r2 :  0.5236335361033014
 # rmse :  6.297188083623483
 
 
-####### dnn >>>> cnn
+####### dnn >>>> cnn 1차
 # 22.854990005493164
 # r2 :  0.7254452490629806
 # rmse :  4.780689709382182
+
+####### dnn >>>> cnn 2차
+# 55.5850944519043
+# r2 :  0.3322618159513461
+# rmse :  7.455541311255175
+# 걸린시간 : 18.47 초
