@@ -1,4 +1,4 @@
-# 30-1 카피
+# 33-1 카피
 
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
@@ -61,9 +61,9 @@ model.add(Conv2D(16, (1,1),padding='valid', activation='relu' ))
 model.add(GlobalAveragePooling2D())
 
 model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(16, activation='relu'))
 model.add(Dropout(0.2))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
 
 model.add(Dense(1))  
 
@@ -160,4 +160,10 @@ print("걸린시간 :", round(end_time-start_time,2), "초")
 # mse :  0.326
 # rmse :  0.571
 # 걸린시간 : 125.83 초
+
+##### dnn >> cnn 변경 2차 (CPU)
+# r2 :  0.749
+# mse :  0.323
+# rmse :  0.568
+# 걸린시간 : 90.08 초
 

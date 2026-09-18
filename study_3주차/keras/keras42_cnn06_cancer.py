@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D, GlobalAveragePooling2D
 from sklearn.model_selection import train_test_split
 import time
 from tensorflow.keras.callbacks import EarlyStopping
@@ -73,8 +73,8 @@ scaler.fit(x_train)
 x_train = scaler.transform(x_train)  
 x_test = scaler.transform(x_test)    
 
-print(np.min(x_train), np.max(x_train)) 
-print(np.min(x_test), np.max(x_test))
+print(np.min(x_train), np.max(x_train)) #-2.3737740158538205 18.736137494346455
+print(np.min(x_test), np.max(x_test)) #-1.8878923766816142 5.996470172961524
 
 ########### X 데이터를 CNN에 넣기 위해 4차원으로 변환
 x_train = x_train.reshape(-1,6,5,1)
@@ -88,12 +88,18 @@ print(y_train.shape, y_test.shape) #(398,) (171,)
 #2. 모델구성
 model = Sequential()
 
-model.add(Conv2D(64, (2,1), input_shape=(6, 5, 1))) 
-model.add(Conv2D(32, (2,1) ,activation='relu' )) 
+model.add(Conv2D(64, (2,2), input_shape=(6, 5, 1))) 
+model.add(Conv2D(32, (2,2), padding='same', activation='relu' )) 
+model.add(MaxPooling2D())
 
-model.add(Flatten())
+# model.add(Flatten())
+model.add(GlobalAveragePooling2D())
 
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
+
 model.add(Dense(1, activation='sigmoid')) #(필수)이진분류모델
 
 model.summary()
@@ -156,10 +162,22 @@ print("acc_score : ", acc_score )
 # accuracy :  0.9649
 # acc_score :  0.9649122807017544
 
-#### dnn >>>> cnn
+#### dnn >>>> cnn 1차
 # 걸린시간 : 3.56 초
 # loss :  0.0828
 # accuracy :  0.9766
 # acc_score :  0.9766081871345029
+
+#### dnn >>>> cnn 1차 (cpu)
+# loss :  0.0612
+# accuracy :  0.9825
+# acc_score :  0.9824561403508771
+# 걸린시간 : 3.54 초
+
+#### dnn >>>> cnn 2차 (cpu)
+# 걸린시간 : 3.71 초
+# loss :  0.1355
+# accuracy :  0.9474
+# acc_score :  0.9473684210526315
 
 

@@ -9,8 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 
 # 1. 데이터
-# path = "./_data/kaggle_bike/" # 학원
-path = "D:\\Furiosa_AI\\study_3주차\\_data\\kaggle_bike\\" # 개인
+path = "./_data/kaggle_bike/" # 학원
+# path = "D:\\Furiosa_AI\\study_3주차\\_data\\kaggle_bike\\" # 개인
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
@@ -85,7 +85,6 @@ model.add(GlobalAveragePooling2D())
 model.add(Dense(32, activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(32, activation='relu'))
-model.add(Dropout(0.2))
 model.add(Dense(32, activation='relu'))
 
 model.add(Dense(1,))  

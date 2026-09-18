@@ -8,8 +8,8 @@ from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2
 from sklearn.metrics import r2_score, mean_squared_error
 
 # 1. 데이터
-path = "D:\\Furiosa_AI\\study_3주차\\_data\\ddarung\\" # 절대경로
-# path = "c:\study\_data\ddarung/" # 슬래시 역슬래시 / 2개 상관없음, 섞어쓰기 되지만 가급적 비권장
+# path = "D:\\Furiosa_AI\\study_3주차\\_data\\ddarung\\" # 절대경로
+path = "c:\study\_data\ddarung/" # 슬래시 역슬래시 / 2개 상관없음, 섞어쓰기 되지만 가급적 비권장
 
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
@@ -129,3 +129,9 @@ print("걸린시간 :", round(end_time-start_time,2), "초")
 # loss :  2380.10791015625 (0에 가까울수록 좋음)
 # r2 :  0.6695114740855965 (1에 가까울수록 좋음)
 # rmse :  48.7863510002996 (0에 가까울수록 좋음)
+
+###### dnn >>> > cnn 2차
+# loss :  2270.956298828125
+# r2 :  0.6846676673123562
+# rmse :  47.65455240756137
+# 걸린시간 : 35.04 초

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D, GlobalAveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping
 import time
 from sklearn.metrics import accuracy_score
@@ -67,12 +67,18 @@ print(y_train.shape, y_test.shape) #(142, 3) (36, 3)
 # 2. 모델구성
 model = Sequential()
 
-model.add(Conv2D(64, (2,1), input_shape=(13, 1, 1))) 
-model.add(Conv2D(32, (2,1) ,activation='relu' )) 
+model.add(Conv2D(64, (3,1), padding='same', input_shape=(13, 1, 1))) 
+model.add(Conv2D(32, (2,1), padding='same', activation='relu' )) 
+model.add(MaxPooling2D())
 
-model.add(Flatten())
+# model.add(Flatten())
+model.add(GlobalAveragePooling2D())
 
 model.add(Dense(32, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
+
 model.add(Dense(3, activation='softmax')) # 다중분류
 
 model.summary()
@@ -92,7 +98,7 @@ es = EarlyStopping(
 
 start_time = time.time()
 model.fit(x_train, y_train,
-          epochs=5000, batch_size=16,
+          epochs=500, batch_size=128,
           verbose=1,
           validation_split=0.2,
           callbacks=[es],
@@ -136,11 +142,17 @@ print("걸린시간 :", round((end_time-start_time),2),"초")
 # [2 2 1 1 0 1 0 1 0 2]
 # acc_score :  0.9722222222222222
 
-##### dnn >>> cnn
+##### dnn >>> cnn (1차)
 # loss : 0.042950477451086044
 # acc : 0.9722222089767456
 # acc_score :  0.9722222222222222
 # 걸린시간 : 54.29 초
+
+##### dnn >>> cnn (2차)
+# loss :  0.2971
+# acc :  0.8996
+# acc_score :  0.8996
+# 걸린시간 :  344.25 초
 
 
 

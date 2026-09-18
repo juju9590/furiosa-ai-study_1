@@ -61,8 +61,9 @@ model = Sequential()
 
 model.add(Conv2D(64, (2,2), input_shape=(9,6,1))) 
 model.add(Conv2D(32, (2,2), padding='same', strides=2, activation='relu' ))
-model.add(MaxPooling2D())
 model.add(Conv2D(32, (2,2), padding='same', activation='relu' ))
+model.add(MaxPooling2D())
+# model.add(Conv2D(32, (2,2), padding='same', activation='relu' ))
 
 # model.add(Flatten())
 model.add(GlobalAveragePooling2D())
@@ -156,8 +157,19 @@ print("걸린시간 :", round(end_time-start_time,3),"초")
 # acc_score : 0.88850546027211
 # 걸린시간 : 805.006 초
 
-#### dnn >>> cnn 2차 
+#### dnn >>> cnn 2차 (cpu)
 # loss : 0.40213915705680847
 # acc : 0.8285242319107056
 # acc_score : 0.8285242205450806
 # 걸린시간 : 1111.718 초
+
+# loss : 0.40553590655326843
+# acc : 0.8270268440246582
+# acc_score : 0.8270268409593556
+# 걸린시간 : 576.053 초
+
+#### dnn >>> cnn 2차 (gpu)
+# loss : 0.30268043279647827
+# acc : 0.8781356811523438
+# acc_score : 0.8781356763594743
+# 걸린시간 : 582.783 초

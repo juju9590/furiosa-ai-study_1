@@ -7,13 +7,13 @@ import numpy as np
 import pandas as pd
 import time
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D, GlobalAveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score 
 
-# path = 'c:/study/_data/kaggle_santander/' #학원
-path = 'D:\\Furiosa_AI\\study_3주차\\_data\\kaggle_santander\\' #집
+path = 'c:/study/_data/kaggle_santander/' #학원
+# path = 'D:\\Furiosa_AI\\study_3주차\\_data\\kaggle_santander\\' #집
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0) #파일이 있는 경로 표시
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
@@ -73,12 +73,20 @@ print(y_train.shape, y_test.shape) # (140000,) (60000,)
 #2. 모델구성
 model = Sequential()
 
-model.add(Conv2D(64, (2,1), input_shape=(20, 10, 1))) 
-model.add(Conv2D(32, (2,1) ,activation='relu' )) 
+model.add(Conv2D(64, (2,2), input_shape=(20, 10, 1))) 
+model.add(Conv2D(32, (3,3) ,activation='relu' )) 
+model.add(Conv2D(32, (2,2) ,padding='same', activation='relu' )) 
+model.add(MaxPooling2D())
 
-model.add(Flatten())
+# model.add(Flatten())
+model.add(GlobalAveragePooling2D())
 
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(32, activation='relu'))
+
 
 model.add(Dense(1, activation='sigmoid'))
 model.summary()
@@ -134,7 +142,7 @@ print("걸린시간 : ", round((end_time - start_time),2),"초")
 # acc :  0.8995
 # acc_score :  0.8995
 
-######### dnn >>> cnn
+######### dnn >>> cnn 1차
 # loss :  0.2161
 # acc :  0.9217
 # acc_score :  0.9217
