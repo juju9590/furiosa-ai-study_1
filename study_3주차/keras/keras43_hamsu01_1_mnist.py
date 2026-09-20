@@ -87,7 +87,7 @@ input1 = Input(shape=(28,28,1))
 conv1 = Conv2D(64, (3,3), activation='relu')(input1)
 conv2 = Conv2D(32, (3,3), activation='relu')(conv1)
 drop1 = Dropout(0.2)(conv2)
-conv3 = Conv2D(32, (3,3), activation='relu')(conv2)
+conv3 = Conv2D(32, (3,3), activation='relu')(drop1)
 
 Flat1 = Flatten()(conv3)
 
