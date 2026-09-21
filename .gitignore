@@ -1,4 +1,12 @@
+# 학습 데이터 및 저장 결과
 **/_data/
+**/_save/
+*.npy
+*.h5
+*.keras
+*.weights.h5
+
+# 파이썬 임시파일
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
