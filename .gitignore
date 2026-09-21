@@ -1,13 +1,19 @@
-# 학습 데이터 및 저장 결과
+# 데이터 폴더 제외
+_data/
 **/_data/
+
+# 모델·결과 저장 폴더 제외
+_save/
 **/_save/
+
+# 대용량 데이터와 모델 파일 제외
 *.npy
+*.npz
 *.h5
 *.keras
 *.weights.h5
 
-# 파이썬 임시파일
+# 파이썬 임시파일 제외
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-
