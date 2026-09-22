@@ -18,6 +18,8 @@ from sklearn.metrics import accuracy_score
 # 1. 데이터
 
 # 데이터 수치화
+start_data = time.time()
+
 datagen = ImageDataGenerator(
     rescale=1./255,
 )
@@ -64,6 +66,8 @@ print(x_train.shape, y_train.shape) # (21733, 100, 100, 3) (21733, 1)
 print(x_test.shape, y_test.shape) # (5434, 100, 100, 3) (5434, 1)
 
 # exit()
+end_data = time.time()
+print("데이터 걸린시간 : ", round(end_data-start_data,3),"초")
 
 np_path = './_save/keras44/' 
 

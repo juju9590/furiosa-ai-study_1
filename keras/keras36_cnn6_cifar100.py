@@ -38,7 +38,7 @@ y_train = y_train.reshape(-1,1)
 y_test = y_test.reshape(-1,1)
 
 y_train = ohe.fit_transform(y_train)
-y_test = ohe.fit_transform(y_test)
+y_test = ohe.transform(y_test)
 
 print(y_train.shape) #(50000, 100)
 

@@ -58,7 +58,7 @@ y_train = y_train.reshape(-1,1) # 데이터갯수를 안다면 y_train = y_train
 y_test = y_test.reshape(-1,1)
 
 y_train = ohe.fit_transform(y_train)
-y_test = ohe.fit_transform(y_test)
+y_test = ohe.transform(y_test)
 
 print(y_train.shape, y_test.shape) #(60000, 10) (10000, 10)
 
