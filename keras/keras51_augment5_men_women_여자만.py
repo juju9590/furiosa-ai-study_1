@@ -63,7 +63,7 @@ print("데이터 걸린시간 : ", round(end_data-start_data,3),"초") # 2.036 �
 ######## 증폭
 
 datagen = ImageDataGenerator(
-    # rescale=1./255,            
+    rescale=1./255,            
 
     horizontal_flip=True,       # 수평 뒤집기,
     # vertical_flip=True,         # 수직 뒤집기, (상하반전)
@@ -117,7 +117,7 @@ print(x_augmented_woman.shape) #(8000, 100, 100, 3)
 # print(x_train_woman.shape,x_test_woman.shape ) #(7591, 100, 100, 3) (1898, 100, 100, 3)
 
 ### 트레인과 증폭된 이미지 붙이기
-x_train=np.concatenate((x_train, x_augmented_woman))/255.
+x_train=np.concatenate((x_train, x_augmented_woman))
 y_train=np.concatenate((y_train, y_augmented_woman))
 
 print(x_train_woman.shape, y_train_woman.shape ) #(7591, 100, 100, 3) (7591, 1)
@@ -130,26 +130,27 @@ print(np.unique(y_train_woman, return_counts=True))
 
 model = Sequential()
 
-model.add(Conv2D(16, (3,3),
-                 input_shape=(100,100,3),
-                 activation='relu'))
-model.add(Conv2D(16, (3,3), activation='relu'))
+model.add(Conv2D(32, (3,3), input_shape=(100,100,3), padding='same', activation='relu'))
+model.add(Conv2D(32, (3,3), padding='same', activation='relu'))
 model.add(MaxPool2D())
+model.add(Dropout(0.2))
 
-model.add(Conv2D(32, (3,3), activation='relu'))
-model.add(Conv2D(32, (3,3), activation='relu'))
+model.add(Conv2D(64, (3,3), padding='same', activation='relu'))
+model.add(Conv2D(64, (3,3), padding='same', activation='relu'))
 model.add(MaxPool2D())
+model.add(Dropout(0.25))
 
-model.add(Conv2D(64, (3,3), activation='relu'))
-model.add(Conv2D(64, (3,3), activation='relu'))
+model.add(Conv2D(128, (3,3), padding='same', activation='relu'))
+model.add(Conv2D(128, (3,3), padding='same', activation='relu'))
 model.add(MaxPool2D())
+model.add(Dropout(0.3))
 
-model.add(Conv2D(128, (3,3), activation='relu'))
-
+# model.add(Flatten())
 model.add(GlobalAveragePooling2D())
 
-model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.3))
+
 model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
